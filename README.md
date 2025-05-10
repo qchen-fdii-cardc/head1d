@@ -238,7 +238,7 @@ $$
 使用 Crank-Nicolson 方法进行时间积分，这是一种无条件稳定的二阶精度格式。
 
 时间离散格式：
-   $$\frac{T^{n+1} - T^n}{\Delta t} = \frac{\alpha}{2}\left(\frac{\partial^2 T}{\partial x^2}\bigg|^{n+1} + \frac{\partial^2 T}{\partial x^2}\bigg|^n\right)$$
+   $$\frac{T^{n+1} - T^n}{\Delta t} = \frac{\alpha}{2}\left(\left.\frac{\partial^2 T}{\partial x^2}\right\vert^{n+1} + \left.\frac{\partial^2 T}{\partial x^2}\right\vert^n\right)$$
 
 矩阵形式：
    $$(I - \frac{\alpha \Delta t}{2}A)T^{n+1} = (I + \frac{\alpha \Delta t}{2}A)T^n$$
@@ -253,7 +253,7 @@ $$
 
 - 放大因子：
      $$G(k) = \frac{1 - \frac{\alpha \Delta t}{2}k^2}{1 + \frac{\alpha \Delta t}{2}k^2}$$
-- 无条件稳定：$|G(k)| \leq 1$ 对所有 $k$ 成立
+- 无条件稳定：$\vert G(k) \vert \leq 1$ 对所有 $k$ 成立
 - 相位误差：$O(\Delta t^2)$
 
 色散和耗散特性：
