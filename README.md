@@ -185,12 +185,12 @@ $$
 
 四阶紧致差分格式是一种隐式方法，它通过构造关于二阶导数的线性方程组来获得更高精度的近似。其基本思想是：
 
-在每个内部点 $i$ 处，我们不仅需要计算该点的二阶导数 $\left.\frac{\partial^2 T}{\partial x^2}\right|_i$，还需要考虑相邻点的二阶导数 $\left.\frac{\partial^2 T}{\partial x^2}\right|_{i-1}$ 和 $\left.\frac{\partial^2 T}{\partial x^2}\right|_{i+1}$。
+在每个内部点 $i$ 处，我们不仅需要计算该点的二阶导数 $\left.\frac{\partial^2 T}{\partial x^2}\right\vert_i$，还需要考虑相邻点的二阶导数 $\left.\frac{\partial^2 T}{\partial x^2}\right\vert_{i-1}$ 和 $\left.\frac{\partial^2 T}{\partial x^2}\right\vert_{i+1}$。
 
 通过泰勒展开和适当的系数选择，可以得到以下关系：
 
 $$
-\frac{1}{6}\left(\left.\frac{\partial^2 T}{\partial x^2}\right|_{i-1} + 4\left.\frac{\partial^2 T}{\partial x^2}\right|_i + \left.\frac{\partial^2 T}{\partial x^2}\right|_{i+1}\right) = \frac{1}{\Delta x^2}(T_{i-1} - 2T_i + T_{i+1}) + O(\Delta x^4)
+\frac{1}{6}\left(\left.\frac{\partial^2 T}{\partial x^2}\right\vert_{i-1} + 4\left.\frac{\partial^2 T}{\partial x^2}\right\vert_i + \left.\frac{\partial^2 T}{\partial x^2}\right\vert_{i+1}\right) = \frac{1}{\Delta x^2}(T_{i-1} - 2T_i + T_{i+1}) + O(\Delta x^4)
 $$
 
 这个格式被称为"紧致"（compact）是因为：
@@ -223,7 +223,7 @@ $$
 - 计算模板紧凑，边界处理相对简单
 - 通过预计算 LU 分解提高求解效率
 
-其中 $\left.\frac{\partial^2 T}{\partial x^2}\right|_i$ 表示在点 $i$ 处的二阶导数
+其中 $\left.\frac{\partial^2 T}{\partial x^2}\right\vert_i$ 表示在点 $i$ 处的二阶导数
 
 色散和耗散分析：
 
