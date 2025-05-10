@@ -442,3 +442,408 @@ source .venv/bin/activate
 ## 许可证
 
 本项目采用 MIT 许可证开源。详见 [LICENSE](LICENSE) 文件。
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css"
+    integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js"
+    integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js"
+    integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe"
+    crossorigin="anonymous"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+            ]
+        });
+    });
+</script>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.esm.min.mjs';
+
+    // 更新Mermaid配置
+    const config = {
+        startOnLoad: false,
+        securityLevel: 'loose',
+        theme: 'default',
+        flowchart: {
+            useMaxWidth: false,
+            htmlLabels: true
+        },
+        class: {
+            useMaxWidth: false,
+            htmlLabels: true
+        }
+    };
+
+    mermaid.initialize(config);
+
+    // 添加渲染队列
+    class RenderQueue {
+        constructor() {
+            this.queue = [];
+            this.isProcessing = false;
+        }
+
+        add(task) {
+            this.queue.push(task);
+            if (!this.isProcessing) {
+                this.process();
+            }
+        }
+
+        async process() {
+            if (this.queue.length === 0) {
+                this.isProcessing = false;
+                return;
+            }
+
+            this.isProcessing = true;
+            const task = this.queue.shift();
+
+            try {
+                await task();
+            } catch (error) {
+                console.error('Error processing render task:', error);
+            }
+
+            setTimeout(() => this.process(), 0);
+        }
+    }
+
+    const renderQueue = new RenderQueue();
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const mermaidElements = document.querySelectorAll(".language-mermaid");
+
+        mermaidElements.forEach((element, index) => {
+            // 获取原始文本内容并清理
+            const originalText = element.textContent.trim();
+
+            // 替换所有HTML实体
+            const processedText = originalText
+                .replace(/&lt;/g, "<")
+                .replace(/&gt;/g, ">")
+                .replace(/--&gt;/g, "-->")
+                .replace(/&lt;\|--/g, "<|--");
+
+            // 创建新的容器
+            const container = document.createElement('div');
+            container.className = 'mermaid-container';
+
+            // 创建控制按钮容器
+            const controls = document.createElement('div');
+            controls.className = 'mermaid-controls';
+
+            // 创建缩放控制
+            const zoomContainer = document.createElement('div');
+            zoomContainer.className = 'zoom-controls';
+
+            const zoomOutBtn = document.createElement('button');
+            zoomOutBtn.textContent = '-';
+            zoomOutBtn.className = 'zoom-btn';
+
+            const zoomPercent = document.createElement('span');
+            zoomPercent.textContent = '100%';
+            zoomPercent.className = 'zoom-percent';
+
+            const zoomInBtn = document.createElement('button');
+            zoomInBtn.textContent = '+';
+            zoomInBtn.className = 'zoom-btn';
+
+            const autoFitBtn = document.createElement('button');
+            autoFitBtn.textContent = '自动适应';
+            autoFitBtn.className = 'zoom-btn';
+
+            const exportBtn = document.createElement('button');
+            exportBtn.textContent = '下载PNG';
+            exportBtn.className = 'zoom-btn';
+
+            // 创建Mermaid图表容器
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.textContent = processedText;
+
+            // 创建源代码显示区域
+            const details = document.createElement('details');
+            const summary = document.createElement('summary');
+            summary.textContent = '显示源代码';
+
+            const pre = document.createElement('pre');
+            pre.className = 'mermaid-source';
+            pre.textContent = originalText;
+
+            details.appendChild(summary);
+            details.appendChild(pre);
+
+            // 组装缩放控制
+            zoomContainer.appendChild(zoomOutBtn);
+            zoomContainer.appendChild(zoomPercent);
+            zoomContainer.appendChild(zoomInBtn);
+            zoomContainer.appendChild(autoFitBtn);
+            zoomContainer.appendChild(exportBtn);
+
+            // 组装控制按钮
+            controls.appendChild(zoomContainer);
+
+            // 组装所有元素
+            container.appendChild(controls);
+            container.appendChild(mermaidDiv);
+            container.appendChild(details);
+
+            // 替换原始元素
+            element.parentNode.replaceChild(container, element);
+
+            // 添加缩放事件监听
+            let currentZoom = 100;
+            const updateZoom = (newZoom) => {
+                currentZoom = Math.max(50, Math.min(200, newZoom));
+                const svg = mermaidDiv.querySelector('svg');
+                if (svg) {
+                    svg.style.transform = `scale(${currentZoom / 100})`;
+                    svg.style.transformOrigin = 'top left';
+                }
+                zoomPercent.textContent = `${currentZoom}%`;
+            };
+
+            const autoFit = () => {
+                updateZoom(100);
+            };
+
+            zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + 10));
+            zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - 10));
+            autoFitBtn.addEventListener('click', autoFit);
+
+            // 添加导出功能
+            exportBtn.addEventListener('click', async () => {
+                const svg = mermaidDiv.querySelector('svg');
+                if (svg) {
+                    try {
+                        const scale = currentZoom / 100;
+                        const pngUrl = await svgToPng(svg, scale);
+
+                        const link = document.createElement('a');
+                        link.download = `mermaid-diagram-${index + 1}.png`;
+                        link.href = pngUrl;
+                        link.click();
+                    } catch (error) {
+                        console.error('Error exporting diagram:', error);
+                    }
+                }
+            });
+
+            // 将渲染任务添加到队列
+            renderQueue.add(async () => {
+                try {
+                    await mermaid.run({
+                        nodes: [mermaidDiv],
+                        suppressErrors: false
+                    });
+
+                    // 渲染完成后自动适应
+                    const svg = mermaidDiv.querySelector('svg');
+                    if (svg) {
+                        const containerWidth = container.clientWidth;
+                        const svgWidth = svg.getBoundingClientRect().width;
+                        const newZoom = (containerWidth / svgWidth) * 100;
+                        svg.style.transform = `scale(${Math.min(100, newZoom) / 100})`;
+                        svg.style.transformOrigin = 'top left';
+                    }
+                } catch (error) {
+                    console.error(`Error rendering diagram ${index + 1}:`, error);
+                    mermaidDiv.innerHTML = `<div class="mermaid-error">Error rendering diagram: ${error.message}</div>`;
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    // 添加 SVG 到 PNG 转换的辅助函数
+    function svgToPng(svg, scale = 1) {
+        return new Promise((resolve, reject) => {
+            try {
+                // 创建临时 SVG 元素
+                const tempSvg = svg.cloneNode(true);
+
+                // 获取原始尺寸
+                const bbox = svg.getBBox();
+                const width = bbox.width * scale;
+                const height = bbox.height * scale;
+
+                // 设置临时 SVG 的属性
+                tempSvg.setAttribute('width', width);
+                tempSvg.setAttribute('height', height);
+                tempSvg.setAttribute('viewBox', `${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`);
+
+                // 复制所有样式和内联样式
+                const styles = window.getComputedStyle(svg);
+                const styleText = Array.from(styles).map(prop =>
+                    `${prop}: ${styles.getPropertyValue(prop)}`
+                ).join('; ');
+                tempSvg.setAttribute('style', styleText);
+
+                // 复制所有子元素的样式
+                const copyStyles = (source, target) => {
+                    const sourceChildren = source.children;
+                    const targetChildren = target.children;
+
+                    for (let i = 0; i < sourceChildren.length; i++) {
+                        const sourceChild = sourceChildren[i];
+                        const targetChild = targetChildren[i];
+
+                        if (sourceChild && targetChild) {
+                            const childStyles = window.getComputedStyle(sourceChild);
+                            const childStyleText = Array.from(childStyles).map(prop =>
+                                `${prop}: ${childStyles.getPropertyValue(prop)}`
+                            ).join('; ');
+                            targetChild.setAttribute('style', childStyleText);
+
+                            copyStyles(sourceChild, targetChild);
+                        }
+                    }
+                };
+
+                copyStyles(svg, tempSvg);
+
+                // 转换为数据 URL
+                const svgData = new XMLSerializer().serializeToString(tempSvg);
+
+                // 创建图片元素
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+
+                img.onload = () => {
+                    try {
+                        // 创建画布
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        // 绘制到画布
+                        const ctx = canvas.getContext('2d');
+                        ctx.fillStyle = '#f8f8f8';
+                        ctx.fillRect(0, 0, width, height);
+
+                        // 使用 drawImage 绘制 SVG
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // 转换为 PNG
+                        const pngUrl = canvas.toDataURL('image/png');
+
+                        resolve(pngUrl);
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+
+                img.onerror = (error) => {
+                    reject(error);
+                };
+
+                // 使用 data URL
+                const svgDataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                img.src = svgDataUrl;
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+</script>
+
+<style>
+    .mermaid-container {
+        margin: 1em 0;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .mermaid-controls {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 0.5em;
+    }
+
+    .zoom-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .zoom-btn {
+        padding: 0.25em 0.5em;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+    }
+
+    .zoom-btn:hover {
+        background: #f5f5f5;
+    }
+
+    .zoom-percent {
+        min-width: 3em;
+        text-align: center;
+    }
+
+    .mermaid {
+        background: #f8f8f8;
+        padding: 1em;
+        border-radius: 4px;
+        margin-bottom: 0.5em;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    .mermaid svg {
+        transition: transform 0.2s ease;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .mermaid-source {
+        background: #f0f0f0;
+        padding: 1em;
+        border-radius: 4px;
+        margin-top: 0.5em;
+        white-space: pre-wrap;
+        font-family: monospace;
+    }
+
+    .mermaid-error {
+        color: red;
+        padding: 1em;
+        background: #fff0f0;
+        border: 1px solid #ffcccc;
+        border-radius: 4px;
+    }
+
+    details {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 0.5em;
+    }
+
+    summary {
+        cursor: pointer;
+        padding: 0.5em;
+        background: #f5f5f5;
+        border-radius: 4px;
+    }
+
+    summary:hover {
+        background: #e9e9e9;
+    }
+</style>
