@@ -147,7 +147,9 @@ chmod +x scripts/*.py
 
 一维热传导方程如下：
 
-$$\frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2}$$
+$$
+\frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2}
+$$
 
 其中：
 
@@ -443,9 +445,6 @@ source .venv/bin/activate
 
 本项目采用 MIT 许可证开源。详见 [LICENSE](LICENSE) 文件。
 
-
-
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css"
     integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js"
@@ -460,7 +459,9 @@ source .venv/bin/activate
         renderMathInElement(document.body, {
             delimiters: [
                 { left: "$$", right: "$$", display: true },
+                { left: "\\[", right: "\\]", display: true },
                 { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false }
             ]
         });
     });
