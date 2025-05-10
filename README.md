@@ -1,20 +1,20 @@
 # 一维热传导方程求解器
 
-本项目实现了一个基于四阶紧致差分格式的一维热传导方程高精度数值求解器。
+本项目实现了一个基于四阶紧致差分格式的一维热传导方程高精度数值求解示例。
 
 ## 项目结构
 
 ### 目录布局
 
-```
+```bash
 heat1d/
 ├── src/                    # C++ 源代码目录
-│   ├── main.cpp           # 主程序入口
-│   └── CMakeLists.txt     # CMake 构建配置
+│   └── main.cpp           # 主程序入口
 ├── scripts/               # Python 脚本目录
 │   ├── visualize.py       # 一维温度分布可视化
 │   ├── visualize_2d.py    # 二维温度分布可视化
-│   └── compare_alpha.py   # 不同热扩散系数的对比
+│   ├── compare_alpha.py   # 不同热扩散系数的对比
+│   └── heat1d_solver.py   # Python 版本的热传导求解器
 ├── results/               # 模拟结果输出目录
 │   └── YYYYMMDDHHMM/     # 时间戳命名的结果目录
 │       ├── temperature_t_*.csv    # 各时间步的温度数据
@@ -23,19 +23,22 @@ heat1d/
 │   └── *.gif             # 生成的动画文件
 ├── build/                # CMake 构建目录
 ├── .venv/                # Python 虚拟环境
-└── README.md            # 项目文档
+├── CMakeLists.txt        # CMake 构建配置
+├── LICENSE               # 许可证
+├── README.md             # 项目文档
+└── .gitignore            # 忽略文件
 ```
 
 ### 文件说明
 
 1. 源代码文件：
    - `src/main.cpp`：实现四阶紧致差分格式的热传导方程求解器
-   - `src/CMakeLists.txt`：CMake 构建配置文件，管理项目依赖和编译选项
 
 2. Python 脚本：
    - `scripts/visualize.py`：生成一维温度分布随时间变化的动画
    - `scripts/visualize_2d.py`：生成包含一维曲线和二维热图的组合动画
    - `scripts/compare_alpha.py`：比较不同热扩散系数下的温度演化过程
+   - `scripts/heat1d_solver.py`：Python 版本的热传导方程求解器
 
 3. 输出目录：
    - `results/`：存储模拟结果
@@ -396,6 +399,8 @@ source .venv/bin/activate
 ### 结果展示
 
 ![alt text](imgs/heat_conduction_2d_202505101317.gif)
+
+![alt text](imgs/heat_conduction_202505101402.gif)
 
 生成的 GIF 动画展示：
 
