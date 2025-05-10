@@ -2,6 +2,8 @@
 
 本项目实现了一个基于四阶紧致差分格式的一维热传导方程高精度数值求解示例。
 
+![一维热传导](imgs/heat_conduction_2d_202505101317.gif)
+
 ## 项目结构
 
 ### 目录布局
@@ -399,8 +401,6 @@ source .venv/bin/activate
 ## 结果与分析
 
 ### 结果展示
-
-![alt text](imgs/heat_conduction_2d_202505101317.gif)
 
 ![alt text](imgs/heat_conduction_202505101402.gif)
 
